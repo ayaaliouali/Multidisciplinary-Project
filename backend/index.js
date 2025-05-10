@@ -31,6 +31,7 @@ const io = new Server(server, {
 
 setSocketIO(io);
 
+app.set('trust proxy', 1); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
