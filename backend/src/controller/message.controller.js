@@ -3,6 +3,7 @@ import User from "../models/user.js";
 import cloudinary from "cloudinary";
 import { getSocketIO } from "../socket.js";
 
+
 export async function  getUsersForSidebar (req,res){
     try {
         const loggedInUserId = req.user._id;
@@ -40,7 +41,7 @@ export async function sendMessages(req,res) {
  const { id: receiverId} = req.params;
  const senderId = req.user._id;
  let imageUrl;
-if(image){
+if(image){ 
     //cloudinary thti fih image yrdhalk url
     const uploadResponse = await cloudinary.uploader.upload(image);
     imageUrl = uploadResponse.secure_url;
