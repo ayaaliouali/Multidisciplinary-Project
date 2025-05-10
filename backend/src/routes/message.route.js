@@ -1,5 +1,9 @@
 import { Router } from "express";
+<<<<<<< HEAD
+import {protect as protectRouter } from "../middlewares/auth.js";
+=======
 import { protect as protectRouter } from "../middlewares/auth.js";
+>>>>>>> ce2d85aa2900975a6d2d3631953dffbb512c15c5
 import { getUsersForSidebar, getMessages, sendMessages } from "../controller/message.controller.js";
 
 const router = Router();

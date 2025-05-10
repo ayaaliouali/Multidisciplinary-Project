@@ -11,6 +11,9 @@ import userRouter from './src/routes/user.js';
 import messageRouter from './src/routes/message.route.js'; 
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import productRoutes  from './src/routes/productRoutes.js';
+import CartRoutes  from './src/routes/cartRoutes.js';
+import comments  from './src/routes/comment.js';
 
 
 const app = express();
@@ -44,6 +47,9 @@ app.get("/",(req,res)=>{
 app.use('/auth',authRouter);
 app.use("/users",userRouter);
 app.use("/message",messageRouter);
+app.use('/api/Products',productRoutes);
+app.use('/api/cart', CartRoutes);
+app.use('/api/v1/comments', comments);
 
 
 io.on("connection", (socket) => {
