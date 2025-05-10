@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+console.log("1) Loaded JWT_SECRET:", JSON.stringify(process.env.JWT_SECRET));
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';

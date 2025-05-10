@@ -10,6 +10,7 @@ export async function login (req,res) {
         const isMatch = await bcrypt.compare(password ,user.password)
         if(isMatch) {
             const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"30d"});
+            console.log("🔑 Newly signed token:", token);
             delete user._doc.password;
        return res.status(200).json({message:"login is successfull",datas:{token,...user._doc}})
        

@@ -7,9 +7,11 @@ export const protect = async (req,res,next)=>{
 try {
     let token ;
     if (req.headers.authorization) {
-        token = req.headers.authorization;
+        token = req.headers.authorization.split(" ")[1];
+        console.log("2) Verifying with JWT_SECRET:", JSON.stringify(process.env.JWT_SECRET));
+        console.log("📨 Token received:", token);
         const decoded = jwt.verify (token , process.env.JWT_SECRET);
-      console.log(decoded);
+      console.log("JWT payload:", decoded);
       const user = await User.findById(decoded.id);
         if (!user) {
             return res.status(401).json({ message: "Unauthorized" });
