@@ -36,6 +36,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
+app.set('trust proxy', 1); 
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,//10 minutes
