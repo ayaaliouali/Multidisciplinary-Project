@@ -37,7 +37,13 @@ index.js               # App entry point
 - `POST /auth/register` — New user registration
 
 ### 👤 User (`/users`)
-- `POST /users` — Create user
+- `GET /users` — Get all users **(admin only)**
+- `GET /users/:id` — Get user by ID
+- `PUT /users/:id` — Update user by ID
+- `DELETE /users/:id` — Delete user by ID **(admin only)**
+
+> ✅ All protected routes require token in headers:  
+> `Authorization: Bearer <token>`
 
 ### 🛍️ Products (`/api/products`)
 - `GET /api/products` — List all products
@@ -75,9 +81,10 @@ Room IDs are generated as sorted strings of `senderId-receiverId`.
 ## 🔐 Middleware
 
 - `helmet()` — Secures HTTP headers
-- `rateLimit()` — Rate limit (100 reqs / 10 mins)
+- `rateLimit()` — Limits 100 requests every 10 minutes
 - `cors()` — Enables CORS
-- `auth.protect()` — JWT-protected routes
+- `auth.protect()` — Auth middleware for JWT
+- `auth.admin()` — Admin role verification
 
 ---
 
