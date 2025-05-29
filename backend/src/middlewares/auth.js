@@ -19,11 +19,19 @@ try {
         req.user = user;
         next();
    
-    }
-    
+    }     
 } catch (error) {
      console.log (error);
         return res.status(500).json(
             {message:error.message})
 }
-}
+};
+
+export const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Admin access only' });
+  }
+};
+
