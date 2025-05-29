@@ -2,7 +2,8 @@
 
 # 🛒 E-Commerce Backend API
 
-This project is a Node.js backend for an e-commerce platform that supports user authentication, product management, cart operations, messaging, and commenting features with ratings.
+This is the backend API for a feature-rich e-commerce platform. It supports user authentication, product and cart management, messaging, commenting with ratings, and admin-level user control. Built with Node.js and Express, it leverages MongoDB for storage and uses JWT for authentication.
+
 
 ## 🚀 Tech Stack
 
@@ -37,10 +38,11 @@ index.js               # App entry point
 - `POST /auth/register` — New user registration
 
 ### 👤 User (`/users`)
-- `GET /users` — Get all users **(admin only)**
-- `GET /users/:id` — Get user by ID
-- `PUT /users/:id` — Update user by ID
-- `DELETE /users/:id` — Delete user by ID **(admin only)**
+👤 Users (/users)
+GET /users — Get all users (admin only)
+GET /users/:id — Get a user by ID (auth required)
+PUT /users/:id — Update user profile (auth required)
+DELETE /users/:id — Delete user (admin only)
 
 > ✅ All protected routes require token in headers:  
 > `Authorization: Bearer <token>`
