@@ -21,12 +21,12 @@ export async function getMessages (req,res){
         const { id:userToChatId } = req.params;
         const myId = req.user._id;
 
-        const messages = await Message.find({
-            $or:[
-                {senderId:myId, reseiverId:userToChatId},
-                {senderId:userToChatId, reseiverId:myId}
-            ]
-        })   ;
+  const messages = await Message.find({
+    $or: [
+        { senderId: myId, receiverId: userToChatId },
+        { senderId: userToChatId, receiverId: myId }
+    ]
+});
         res.status(200).json(messages);  
     } catch (error) {
         console.log("Error in getMessages:",error.message);
