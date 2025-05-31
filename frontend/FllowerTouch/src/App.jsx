@@ -1,12 +1,16 @@
 import React from 'react'
 import { Navbar } from './components/Navbar/Navbar'
 import Hero from './components/Hero/Hero';
+import AuthProvider from './context/authContext';
 
 export const App = () => {
   return (
     <div>
-      <Navbar />
+      <AuthProvider>
+         <Navbar />
       <Hero />
+      </AuthProvider>
+     
       
     </div>
   )

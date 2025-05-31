@@ -3,14 +3,11 @@ import React, { useState } from 'react';
 import LoginModal from './modals/LoginModal';
 import SignUpModal from './modals/SignUpModal';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 export const Navbar = () => {
-  <Link 
-  to="/Shop" 
-  className="hover:text-gray-300 transition-colors duration-200"
->
-  Shop
-</Link>
+  const { token, isAuthenticated, isLoading, logout } = useAuth();
+ 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
 
@@ -61,7 +58,12 @@ export const Navbar = () => {
   };
 
   return (
-  <>
+  <> <Link 
+  to="/Shop" 
+  className="hover:text-gray-300 transition-colors duration-200"
+>
+  Shop
+</Link>
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
@@ -102,22 +104,38 @@ export const Navbar = () => {
 
       {/* Auth Buttons */}
       <div style={{ display: 'flex', gap: '2rem' }}>
-        <button
-        style={styles.authButton}
-        onMouseEnter={(e) => e.target.style.backgroundColor = '#d19181'}
-        onMouseLeave={(e) => e.target.style.backgroundColor = '#EDAE9E'}
-        onClick={() => setShowSignUpModal(true)}
-        >
-        Sign Up
-        </button>
-        <button
-        style={styles.authButton}
-        onMouseEnter={(e) => e.target.style.backgroundColor = '#d19181'}
-        onMouseLeave={(e) => e.target.style.backgroundColor = '#EDAE9E'}
-        onClick={() => setShowLoginModal(true)}
-        >
-        Log in
-        </button>
+        {isAuthenticated
+          ?
+          <>
+            <button
+              style={styles.authButton}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#d19181'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#EDAE9E'}
+              onClick={() =>logout()}
+            >
+             log out 
+            </button>
+          </>
+          :
+          <>
+            <button
+              style={styles.authButton}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#d19181'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#EDAE9E'}
+              onClick={() => setShowSignUpModal(true)}
+            >
+              Sign Up
+            </button>
+            <button
+              style={styles.authButton}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#d19181'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#EDAE9E'}
+              onClick={() => setShowLoginModal(true)}
+            >
+              Log in
+            </button>
+          </>
+        }
       </div>
 
       {/* Additional Buttons */}
