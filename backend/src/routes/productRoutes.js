@@ -1,32 +1,12 @@
-import express from 'express';
-import Product from '../models/Product.js';
-const router = express.Router();
+import { Router } from "express";
+import {getproduct,createproduct,updatedproduct,deleteproduct} from "../controller/product.js";
+import { protect } from "../middlewares/auth.js";
 
+const router = Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-
-router.post('/', async (req, res) => {
-  const product = new Product({
-    name: req.body.name,
-    price: req.body.price,  
-    description: req.body.description,
-    image: req.body.image
-  });
-
-  try {
-    const newProduct = await product.save();
-    res.status(201).json(newProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+router.get("/", getproduct);
+router.post("/", protect, createproduct);
+router.put("/:id", protect, updatedproduct);
+router.delete("/:id", protect, deleteproduct);
 
 export default router;
