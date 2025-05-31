@@ -1,8 +1,8 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Image4 from '../../assets/hero/flower.jpg'
 import LoginModal from '../Navbar/modals/LoginModal';
 import SignUpModal from '../Navbar/modals/SignUpModal';
-
 
 const heroStyle = {
     backgroundColor: '#FFF9F0',
@@ -11,7 +11,6 @@ const heroStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    
 };
 
 const textStyle = {
@@ -20,18 +19,26 @@ const textStyle = {
     color: '#333',
     marginLeft: '20px',
 };
+
 const shadowStyle = {
     boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
 };
+
 const imageStyle = {
     width: '300px',
     height: 'auto',
-    borderRadius: '50%', // Makes the shadow appear more natural under the flower
+    borderRadius: '50%',
     objectFit: 'contain',
-    filter: 'drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.3))', // Shadow without a box
+    filter: 'drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.3))',
 };
 
 const Hero = () => {
+    const navigate = useNavigate();
+
+    const handleShopNow = () => {
+        navigate('/shop');
+    };
+
     return (
         <>
             <style>
@@ -52,7 +59,7 @@ const Hero = () => {
                     height: 'auto',
                     position: 'relative',
                     textAlign: 'center',
-                    marginTop: '80px', // Add margin to push below navbar
+                    marginTop: '80px',
                 }}
             >
                 <link
@@ -79,6 +86,7 @@ const Hero = () => {
                         <button
                             className="bg-[#EDAF9E] hover:bg-[#C05263] text-white px-5 py-2 mt-8 text-lg font-serif rounded shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#C05263] hover:shadow-xl cursor-pointer"
                             style={{ fontFamily: "'DM Serif Display', serif" }}
+                            onClick={handleShopNow}
                         >
                             Shop Now
                         </button>
@@ -105,6 +113,4 @@ const Hero = () => {
 }
 
 export default Hero;
-
-
  
