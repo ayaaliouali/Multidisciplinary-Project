@@ -5,16 +5,17 @@ import {
   getProduct,
   updateProduct,
   deleteProduct,
-} from '../../controllers/admin/adminProductController.js';
-import { isAdmin } from '../../middlewares/auth.js';
+} from '../../controller/admin/adminProductController.js';
+import { protect } from '../../middlewares/auth.js';
 import upload from '../../middlewares/upload.js';
 
 const router = express.Router();
 
-router.post('/', isAdmin, upload.single('image'), createProduct);
-router.get('/A', isAdmin, getAllProducts);
-router.get('/:id', isAdmin, getProduct);
-router.put('/:id', isAdmin, upload.single('image'), updateProduct);
-router.delete('/:id', isAdmin, deleteProduct);
+router.post('/', protect, createProduct); // Create a product
+router.put('/:id', protect, updateProduct); // Update a product
+router.delete('/:id', protect, deleteProduct); // Delete a product
+router.get('/all', protect, getAllProducts); // Fetch all products
+
+router.get('/:id', getProduct);
 
 export default router;

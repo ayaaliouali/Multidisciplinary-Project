@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, isAdmin } from '../middlewares/auth.js';
-import {getAllUsers,deleteUser,} from '../controllers/userController.js';
+import { deleteUser, getAllUsers } from '../../controller/admin/adminUserController.js';
 
 const router = express.Router();
 //admin only
