@@ -7,12 +7,11 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
     price: '',
     category: '',
     description: '',
-    image: '',
+    image: null, // Changed to null for file input
     stock: '',
     sku: '',
-    featured: false
+    featured: false,
   });
-
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -22,22 +21,25 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
         price: product.price || '',
         category: product.category || '',
         description: product.description || '',
-        image: product.image || '',
+        image: null, // File input can't be pre-filled
         stock: product.stock || '',
         sku: product.sku || '',
-        featured: product.featured || false
+        featured: product.featured || false,
       });
     }
   }, [product]);
 
   const validateForm = () => {
     const newErrors = {};
-    
     if (!formData.name.trim()) newErrors.name = 'Product name is required';
-    if (!formData.price || parseFloat(formData.price) <= 0) newErrors.price = 'Valid price is required';
+    if (!formData.price || parseFloat(formData.price) <= 0)
+      newErrors.price = 'Valid price is required';
     if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.stock || parseInt(formData.stock) < 0) newErrors.stock = 'Valid stock quantity is required';
-    
+    if (!formData.stock || parseInt(formData.stock) < 0)
+      newErrors.stock = 'Valid stock quantity is required';
+    if (!isEditing && !formData.image)
+      newErrors.image = 'Image is required for new products';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -46,15 +48,24 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
     if (!validateForm()) return;
 
     const productData = {
-      ...formData,
-      id: product?.id || Date.now(),
+      name: formData.name,
       price: parseFloat(formData.price) || 0,
+      category: formData.category,
+      description: formData.description,
+      image: formData.image, // File object
       stock: parseInt(formData.stock) || 0,
       sku: formData.sku || `SKU-${Date.now()}`,
-      createdAt: product?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      featured: formData.featured,
     };
     onSave(productData);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, image: file });
+      setErrors({ ...errors, image: null });
+    }
   };
 
   const categories = [
@@ -65,7 +76,7 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
     'Wedding',
     'Birthday',
     'Anniversary',
-    'Corporate Gifts'
+    'Corporate Gifts',
   ];
 
   return (
@@ -74,7 +85,6 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
         <h3 className="text-xl font-semibold mb-6">
           {isEditing ? 'Edit Product' : 'Add New Product'}
         </h3>
-        
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Product Name *</label>
@@ -89,7 +99,6 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
-          
           <div>
             <label className="block text-sm font-medium mb-1">Price ($) *</label>
             <input
@@ -105,7 +114,6 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
             />
             {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
           </div>
-          
           <div>
             <label className="block text-sm font-medium mb-1">Category *</label>
             <select
@@ -116,13 +124,16 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
               }`}
             >
               <option value="">Select Category</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
-            {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
+            {errors.category && (
+              <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+            )}
           </div>
-          
           <div>
             <label className="block text-sm font-medium mb-1">Stock Quantity *</label>
             <input
@@ -137,7 +148,25 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
             />
             {errors.stock && <p className="text-red-500 text-xs mt-1">{errors.stock}</p>}
           </div>
-
+          <div>
+            <label className="block text-sm font-medium mb-1">Image {isEditing ? '' : '*'}</label>
+            <input
+              type="file"
+              accept="image/jpeg,image/jpg,image/png"
+              onChange={handleFileChange}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.image ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
+            {isEditing && product.image && (
+              <img
+                src={`http://localhost:4000${product.image}`}
+                alt="Current product"
+                className="w-24 h-24 object-cover mt-2 rounded"
+              />
+            )}
+          </div>
           <div>
             <label className="block text-sm font-medium mb-1">SKU</label>
             <input
@@ -148,30 +177,31 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
               placeholder="Auto-generated if empty"
             />
           </div>
-          
           <div>
             <label className="block text-sm font-medium mb-1">Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows="3"
               placeholder="Product description..."
             />
           </div>
-          
           <div>
             <label className="flex items-center">
               <input
                 type="checkbox"
                 checked={formData.featured}
-                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, featured: e.target.checked })
+                }
                 className="mr-2"
               />
               <span className="text-sm font-medium">Featured Product</span>
             </label>
           </div>
-          
           <div className="flex gap-3 pt-6">
             <button
               onClick={handleSubmit}

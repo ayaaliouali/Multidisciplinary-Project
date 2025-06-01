@@ -18,7 +18,12 @@ import productRoutes from './src/routes/productRoutes.js';
 import adminProductRoutes from './src/routes/admin/adminProductRoutes.js';
 import CartRoutes from './src/routes/cartRoutes.js';
 import comments from './src/routes/comment.js';
+import path from 'path';
 
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
@@ -55,6 +60,7 @@ app.get("/",(req,res)=>{
 app.use('/auth',authRouter);    // done
 app.use('/users',userRouter);
 app.use('/message',messageRouter);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/products', productRoutes, adminProductRoutes); // done
 app.use('/api/cart', CartRoutes);
 app.use('/api/v1/comments', comments);

@@ -1,5 +1,4 @@
-import React from 'react';
-import { User, Bell, Settings } from 'lucide-react';
+import { User } from 'lucide-react';
 
 const DashboardHeader = ({ adminName = "Admin" }) => {
   const currentTime = new Date().toLocaleTimeString('en-US', {
