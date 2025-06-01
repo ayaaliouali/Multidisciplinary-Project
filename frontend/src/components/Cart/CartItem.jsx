@@ -6,9 +6,9 @@ const CartItem = ({ item }) => {
 
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity <= 0) {
-      removeItem(item._id);
+      removeItem(item.id);
     } else {
-      updateQuantity(item._id, newQuantity);
+      updateQuantity(item.id, newQuantity);
     }
   };
 
@@ -17,7 +17,7 @@ const CartItem = ({ item }) => {
       {/* Product Image */}
       <div className="flex-shrink-0">
         <img
-          src={item.image}
+          src={item.img}
           alt={item.title}
           className="w-20 h-20 object-cover rounded-md"
         />
@@ -38,7 +38,6 @@ const CartItem = ({ item }) => {
         <button
           onClick={() => handleQuantityChange(item.quantity - 1)}
           className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors"
-          disabled={item.quantity <= 1}
         >
           -
         </button>
@@ -54,12 +53,12 @@ const CartItem = ({ item }) => {
       {/* Price */}
       <div className="text-right">
         <p className="font-semibold text-pink-950">{(item.price * item.quantity).toLocaleString()}da</p>
-        <p className="text-sm text-gray-500">{item.price.toLocaleString()}da each</p>
+        <p className="text-sm text-gray-500">{item.price}da each</p>
       </div>
 
       {/* Remove Button */}
       <button
-        onClick={() => removeItem(item._id)}
+        onClick={() => removeItem(item.id)}
         className="text-red-500 hover:text-red-700 transition-colors p-2"
         title="Remove item"
       >

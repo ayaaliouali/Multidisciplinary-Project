@@ -52,10 +52,10 @@ app.get("/",(req,res)=>{
   res.send("Express.js is running successfully")
 });
 
-app.use('/auth',authRouter);
+app.use('/auth',authRouter);    // done
 app.use('/users',userRouter);
 app.use('/message',messageRouter);
-app.use('/api/products', productRoutes, adminProductRoutes); // Ensure both routes are mounted
+app.use('/api/products', productRoutes, adminProductRoutes); // done
 app.use('/api/cart', CartRoutes);
 app.use('/api/v1/comments', comments);
 

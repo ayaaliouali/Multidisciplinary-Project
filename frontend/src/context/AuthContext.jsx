@@ -1,5 +1,47 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+
+// Global fetch function
+const globalFetch = async (url, options = {}, includeToken = false) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  if (includeToken) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    } else {
+      throw new Error('No authentication token found');
+    }
+  }
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Non-JSON response:', text);
+      throw new Error(`Expected JSON, received: ${text.slice(0, 50)}...`);
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed with status ${response.status}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`Fetch error for ${url}:`, error.message, { options });
+    throw error;
+  }
+};
 
 // Create the AuthContext
 export const AuthContext = createContext();
@@ -14,13 +56,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-      // Optionally verify token with the backend
-      axios
-        .get('http://localhost:4000/users/me', {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        })
-        .then((response) => {
-          setUser(response.data);
+      globalFetch('http://localhost:4000/users/me', {}, true)
+        .then((data) => {
+          setUser(data);
           setToken(storedToken);
         })
         .catch((error) => {
@@ -37,19 +75,19 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:4000/auth/login', {
-        email,
-        password,
+      const data = await globalFetch('http://localhost:4000/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
       });
-      const { token, name, email: userEmail } = response.data.data;
-      setUser({ name, email: userEmail });
+      const { token, name, email: userEmail, _id } = data.data; // Ensure _id is included
+      setUser({ _id, name, email: userEmail });
       setToken(token);
       localStorage.setItem('token', token);
-      return { success: true, message: response.data.message };
+      return { success: true, message: data.message };
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed',
+        message: error.message || 'Login failed',
       };
     }
   };
@@ -57,20 +95,19 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post('http://localhost:4000/auth/register', {
-        name,
-        email,
-        password,
+      const data = await globalFetch('http://localhost:4000/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password }),
       });
-      const { token, ...userData } = response.data.data;
-      setUser(userData);
+      const { token, _id, ...userData } = data.data; // Ensure _id is included
+      setUser({ _id, ...userData });
       setToken(token);
       localStorage.setItem('token', token);
-      return { success: true, message: response.data.message };
+      return { success: true, message: data.message };
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Registration failed',
+        message: error.message || 'Registration failed',
       };
     }
   };
@@ -84,7 +121,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, register, logout, loading }}
+      value={{ user, token, login, register, logout, loading, globalFetch }}
     >
       {children}
     </AuthContext.Provider>
