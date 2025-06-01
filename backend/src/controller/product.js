@@ -56,7 +56,7 @@ export const deleteProduct = async (req, res) => {
 
 
 
-export default router;
+
 
 
 
