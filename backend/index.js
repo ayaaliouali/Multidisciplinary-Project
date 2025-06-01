@@ -15,6 +15,7 @@ import messageRouter from './src/routes/message.route.js';
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import productRoutes  from './src/routes/productRoutes.js';
+import adminProductRoutes  from "./src/routes/admin/adminProductRoutes.js";
 import CartRoutes  from './src/routes/cartRoutes.js';
 import comments  from './src/routes/comment.js';
 
@@ -38,6 +39,7 @@ app.use(cors());
 app.use(helmet());
 app.set('trust proxy', 1); 
 
+
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,//10 minutes
   max: 100,
@@ -52,7 +54,7 @@ app.get("/",(req,res)=>{
 app.use('/auth',authRouter);
 app.use("/users",userRouter);
 app.use("/message",messageRouter);
-app.use('/api/Products',productRoutes);
+app.use('/api/products',productRoutes, adminProductRoutes);
 app.use('/api/cart', CartRoutes);
 app.use('/api/v1/comments', comments);
 
