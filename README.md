@@ -44,12 +44,27 @@ GET /users/:id — Get a user by ID (auth required)
 PUT /users/:id — Update user profile (auth required)
 DELETE /users/:id — Delete user (admin only)
 
+### 🛍️ Product (/products)
+🛍️ Products (/products)
+
+GET /products — Get all products (public)
+
+
+
+
 > ✅ All protected routes require token in headers:  
 > `Authorization: Bearer <token>`
 
 ### 🛍️ Products (`/api/products`)
-- `GET /api/products` — List all products
-- `POST /api/products` — Create new product
+- `GET /api/products/All` — List all products
+
+
+### 👑 Admin (`/api/products`)
+-` POST /api/products/` _ Creat new product       
+- `GET /api/products/A`  _ List all products
+- `GET /api/products/:id` _Git product by ID
+- `PUT /api/products/:id`  _ Update products
+- `DELETE /api/products/:id` _Remove product
 
 ### 🛒 Cart (`/api/cart`)
 - `GET /api/cart/:userId` — Get user’s cart
