@@ -5,8 +5,8 @@ import {
   getProduct,
   updateProduct,
   deleteProduct
-} from '../controllers/admin/adminProductController.js';
-import { isAdmin } from '../middlewares/auth.js';
+} from '../../controllers/admin/adminProductController.js';
+import { isAdmin } from '../../middlewares/auth.js';
 
 const router = express.Router();
 
