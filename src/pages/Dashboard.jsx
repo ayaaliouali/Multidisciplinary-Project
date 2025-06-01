@@ -120,7 +120,7 @@ const AdminDashboard = () => {
                 <div key={product.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="mb-3">
                     <h3 className="font-semibold text-lg">{product.name}</h3>
-                    <p className="text-gray-600">${product.price}</p>
+                    <p className="text-gray-600">{product.price}dz</p>
                     <p className="text-sm text-gray-500">{product.category}</p>
                     <p className="text-sm">
                       Stock: <span className={product.stock <= 5 ? 'text-red-600 font-medium' : 'text-green-600'}>{product.stock}</span>

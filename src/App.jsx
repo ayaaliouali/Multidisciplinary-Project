@@ -5,7 +5,7 @@ import Shop from './pages/Shop'
 import Home from './pages/Home'
 import Layout from './pages/Layout'
 import AboutUs from './pages/AboutUs'
-
+import Contact from './pages/Contact'
 import Dashboard from './pages/Dashboard'
 import Cart from './pages/Cart'
 
@@ -27,7 +27,7 @@ export const App = () => {
           <Route index element={<Home />} />
           <Route path="shop" element={<Shop />} />
           <Route path="about" element={<AboutUs />} />
-          
+          <Route path="contact" element={<Contact />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="cart" element={<Cart />} />
           <Route path="*" element={<NoPage />} />

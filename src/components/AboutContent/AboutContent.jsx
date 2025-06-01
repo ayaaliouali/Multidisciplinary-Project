@@ -83,25 +83,15 @@ const AboutContent = () => {
                       color: '#2D1B17'
                     }}
                   >
-                    Whether you're celebrating someone special or simply spreading joy, <span className="font-bold" style={{ color: '#C05263' }}>Flower Touche</span> is here to help you say it with heart — 
+                    Whether you're celebrating someone special or simply spreading joy, <span className="font-bold" style={{ color: '#C05263' }}>Flower Touch</span> is here to help you say it with heart 
                     <br />
                     <span className="italic">One gift at a time.</span>
                   </p>
                 </div>
               </div>
 
-              {/* Decorative Elements */}
-              <div className="flex justify-center lg:justify-start space-x-4 mt-8">
-                <div className="w-12 h-12 rounded-full bg-pink-200 flex items-center justify-center">
-                  <span className="text-2xl">🌸</span>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-rose-200 flex items-center justify-center">
-                  <span className="text-2xl">💝</span>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center">
-                  <span className="text-2xl">💕</span>
-                </div>
-              </div>
+              
+             
             </div>
           </div>
         </div>

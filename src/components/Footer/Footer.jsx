@@ -123,12 +123,8 @@ const Footer = () => {
               <FaHeart className="text-red-400" />
               <span>for flower lovers.</span>
             </div>
-            <div className="flex space-x-6 text-sm">
-              <a href="#" className="hover:underline">Privacy Policy</a>
-              <a href="#" className="hover:underline">Terms of Service</a>
-              <a href="#" className="hover:underline">Shipping Info</a>
-              <a href="#" className="hover:underline">Returns</a>
-            </div>
+            
+          
           </div>
         </div>
       </div>

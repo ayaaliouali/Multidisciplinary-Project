@@ -156,7 +156,7 @@ const ShopProductsData = [
     title: "Artistic Glass Cup",
     price: 4800,
     rating: 4.9,
-    color: "Blue",
+    color: "Pink",
     description: "Handcrafted glass cup with artistic designs, perfect for special occasions.",
   },
   {

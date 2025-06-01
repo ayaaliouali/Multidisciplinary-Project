@@ -26,7 +26,7 @@ const DashboardStats = ({ products }) => {
     },
     {
       title: 'Inventory Value',
-      value: `$${totalValue.toFixed(2)}`,
+      value: `${totalValue.toFixed(2)}dz`,
       icon: DollarSign,
       color: 'text-purple-600',
       bg: 'bg-purple-100',
