@@ -20,10 +20,7 @@ export async function login(req, res) {
     }
 
     
-      
 
-    
-    
 
     // Find user
     const user = await User.findOne({ email:email});
