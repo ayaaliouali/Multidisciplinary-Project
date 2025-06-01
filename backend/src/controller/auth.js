@@ -1,11 +1,11 @@
-import User from "../models/user.js";
+import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, role: user.role },
-    "KEY",
+    process.env.JWT_SECRET,
     { expiresIn: "30d" }
   );
 };

@@ -6,7 +6,7 @@ import { protect } from "../middlewares/auth.js";
 const router = Router();
 
 
-router.get('/All', protect, getAllProducts);
+router.get('/all', protect, getAllProducts);
 
 
 export default router;
