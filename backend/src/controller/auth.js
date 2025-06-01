@@ -5,38 +5,59 @@ import bcrypt from "bcrypt";
 const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, role: user.role },
-    process.env.JWT_SECRET,
+    "KEY",
     { expiresIn: "30d" }
   );
 };
 
-export async function login (req,res) {
- try {
-      const {email,password} = req.body;
-      if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required." });
+export async function login(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    // Validate inputs
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
     }
-      const user = await User.findOne({email});
-      if (user){
-        const isMatch = await bcrypt.compare(password ,user.password)
-        if(isMatch) {
-             const token = generateToken(user);
-            console.log("🔑 Newly signed token:", token);
-            delete user._doc.password;
-       return res.status(200).json({message:"login is successfull",data:{token,...user._doc}})
-       
-        }else{
-            return res.status(400).json({message:"Invalid credentials"})
-        }
-      }
-      return res.status(400).json({message:"Invalid credentials"})
-        
- } catch (error) {
-    console.log(error);
-      res.status(500).json({message:error.message});
+
     
- }
+      
+
+    
+    
+
+    // Find user
+    const user = await User.findOne({ email:email});
+    if (!user) {
+      console.error(`Login failed: No user found for email ${sanitizedEmail}`);
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.error(`Login failed: Incorrect password for email ${sanitizedEmail}`);
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate token
+    const token = generateToken(user);
+    console.log('🔑 Newly signed token:', token);
+
+    // Return only necessary fields
+    res.status(200).json({
+      message: 'Login successful',
+      data: {
+        token,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
 }
+
 
 export async function register(req,res){
  try {
