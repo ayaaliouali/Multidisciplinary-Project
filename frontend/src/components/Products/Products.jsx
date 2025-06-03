@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductDetailModal from './ProductDetailModal';
 import AddToCartButton from '../Cart/AddToCartButton';
 import { useAuth } from '../../context/AuthContext';
+import { BACKEND_URL } from '../../utils';
 
 const Products = () => {
   const { globalFetch } = useAuth(); // Get globalFetch from AuthContext
@@ -15,8 +16,8 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await globalFetch('http://localhost:4000/api/products/all?pick=5&random=true', {}, true);
-        setProducts(data); // Set fetched products to state
+        const response = await globalFetch('http://localhost:4000/api/products/all?pick=5&random=true', {}, true);
+        setProducts(response.data); // Set fetched products to state
       } catch (err) {
         setError(err.message || 'Failed to fetch products');
         console.error('Error fetching products:', err);
@@ -73,7 +74,7 @@ const Products = () => {
             )}
             <div className='grid w-full grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-6 bg-center'>
               {/* Card section */}
-              {products.slice(0, visibleCount).map((data, idx) => (
+             {products?.length > 0 && products.slice(0, visibleCount).map((data, idx) => (
                 <div
                   className="product-card"
                   key={data.id}
@@ -84,7 +85,7 @@ const Products = () => {
                   data-idx={idx}
                 >
                   <img 
-                    src={data.img} 
+                    src={BACKEND_URL + data.image}
                     alt={data.title}
                     className='h-[220px] w-[150px] object-cover rounded-md'
                     style={{ display: 'inline-block', marginRight: '10px' }}

@@ -56,7 +56,7 @@ export const getAllProducts = async (req, res) => {
 // Get top-rated products
 export const getTopProducts = async (req, res) => {
   try {
-    const products = await Product.find({ rating: { $gt: 4.5 } }).exec();
+    const products = await Product.find({ price: { $gt: 1000} }).exec();
     
     if (!products.length) {
       return res.status(404).json({ message: 'No top-rated products found' });

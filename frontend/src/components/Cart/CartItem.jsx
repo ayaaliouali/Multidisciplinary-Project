@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../../context/CartContext';
+import { BACKEND_URL } from '../../utils';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeItem } = useCart();
@@ -17,7 +18,7 @@ const CartItem = ({ item }) => {
       {/* Product Image */}
       <div className="flex-shrink-0">
         <img
-          src={item.img}
+          src={BACKEND_URL + item.img}
           alt={item.title}
           className="w-20 h-20 object-cover rounded-md"
         />

@@ -1,10 +1,12 @@
+// ShopProducts.jsx
 import React, { useEffect, useState } from 'react';
 import AddToCartButton from '../Cart/AddToCartButton';
 import ProductDetailModal from '../Products/ProductDetailModal';
 import { useAuth } from '../../context/AuthContext';
+import { BACKEND_URL } from '../../utils';
 
 const ShopProducts = () => {
-  const { globalFetch } = useAuth(); // Get globalFetch from AuthContext
+  const { globalFetch } = useAuth();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -16,16 +18,21 @@ const ShopProducts = () => {
     rating: 'all',
   });
   const [sortBy, setSortBy] = useState('name');
-  const [visibleItems, setVisibleItems] = useState([]); // For animations
+  const [visibleItems, setVisibleItems] = useState([]);
 
-  // Fetch products on mount with optional query parameters
+  // Fetch products on mount with query parameters
   useEffect(() => {
     const fetchShopProducts = async () => {
       try {
-        const data = await globalFetch('http://localhost:4000/api/products/shop?pick=10&random=true', {}, true);
-        setProducts(data);
-        setFilteredProducts(data);
-        setVisibleItems(Array(data.length).fill(false));
+        const response = await globalFetch('http://localhost:4000/api/products/shop?pick=10&random=true', {}, true);
+        // Check if response contains a 'data' property
+        const fetchedProducts = response.data ? response.data : response;
+        setProducts(fetchedProducts);
+        setFilteredProducts(fetchedProducts);
+        setVisibleItems(Array(fetchedProducts.length).fill(false));
+        if (response.message) {
+          setError(response.message); // Display message like "Requested 10 products, but only 1 available"
+        }
       } catch (err) {
         setError(err.message || 'Failed to fetch shop products');
         console.error('Error fetching shop products:', err);
@@ -58,7 +65,7 @@ const ShopProducts = () => {
     }
 
     if (filters.color !== 'all') {
-      filtered = filtered.filter((product) => product.color.toLowerCase() === filters.color.toLowerCase());
+      filtered = filtered.filter((product) => product.color?.toLowerCase() === filters.color.toLowerCase());
     }
 
     if (filters.rating !== 'all') {
@@ -77,7 +84,7 @@ const ShopProducts = () => {
           return b.rating - a.rating;
         case 'name':
         default:
-          return a.title.localeCompare(b.title);
+          return a.name.localeCompare(b.name); // Changed 'title' to 'name' to match schema
       }
     });
 
@@ -205,7 +212,7 @@ const ShopProducts = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product, i) => (
               <div
-                key={product.id}
+                key={product._id} // Changed to '_id' to match MongoDB schema
                 className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow ${visibleItems[i] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                   }`}
                 style={{
@@ -215,17 +222,17 @@ const ShopProducts = () => {
               >
                 <div className="relative">
                   <img
-                    src={product.img || '/placeholder.svg'}
-                    alt={product.title}
+                    src={(BACKEND_URL + product.image) || '/placeholder.svg'}
+                    alt={product.name} // Changed to 'name' to match schema
                     className="w-full h-64 object-cover"
                   />
                   <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
-                    {product.color}
+                    {product.color || 'N/A'} // Handle missing color
                   </div>
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-800 mb-2">{product.title}</h3>
+                  <h3 className="font-semibold text-gray-800 mb-2">{product.name}</h3> {/* Changed to 'name' */}
                   <p className="text-2xl font-bold mb-2" style={{ color: '#C05263' }}>
                     {product.price.toLocaleString()}da
                   </p>

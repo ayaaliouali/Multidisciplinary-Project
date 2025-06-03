@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BACKEND_URL } from '../../utils';
 
 const CreateProduct = () => {
   const [formData, setFormData] = useState({
@@ -92,7 +93,7 @@ const CreateProduct = () => {
           />
           {formData.image && (
             <img
-              src={URL.createObjectURL(formData.image)}
+              src={formData.image ? URL.createObjectURL(BACKEND_URL + formData.image) : ''}
               alt="Preview"
               className="w-24 h-24 object-cover rounded-lg border border-gray-300 mt-2"
             />

@@ -2,6 +2,8 @@
 import React from 'react';
 import { Edit2, Trash2, Star, Package } from 'lucide-react';
 
+import { BACKEND_URL } from '../../utils';
+
 const ProductCard = ({ product, onEdit, onDelete }) => {
   const handleDelete = () => {
     if (window.confirm(`Are you sure you want to delete "${product.name}"?`)) {
@@ -24,7 +26,7 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
       <div className="relative aspect-square bg-gray-100 overflow-hidden">
         {product.image ? (
           <img 
-            src={product.image} 
+            src={BACKEND_URL + product.image} 
             alt={product.name}
             className="w-full h-full object-cover"
           />

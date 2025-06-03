@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AddToCartButton from '../Cart/AddToCartButton'; // Assuming you have this component
 import { useAuth } from '../../context/AuthContext';
 import ProductDetailModal from '../Products/ProductDetailModal';
+import { BACKEND_URL } from '../../utils';
 
 const TopProducts = () => {
   const { globalFetch } = useAuth(); // Get globalFetch from AuthContext
@@ -85,7 +86,7 @@ const TopProducts = () => {
                 {/* Image section */}
                 <div className="overflow-hidden rounded-xl flex flex-col items-center">
                   <img
-                    src={data.img}
+                    src={BACKEND_URL + data.image}
                     alt={data.title}
                     className="rounded-xl group-focus:scale-105 block mx-auto max-w-[140px] group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
                   />

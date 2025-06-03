@@ -1,12 +1,14 @@
+// pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
-import axios from 'axios';
 import DashboardHeader from '../components/Dashboard/DashboardHeader';
 import DashboardStats from '../components/Dashboard/DashboardStats';
 import ProductForm from '../components/Products/ProductForm';
 import ProductDetailModal from '../components/Products/ProductDetailModal';
 
-const API_URL = 'http://localhost:4000/api/products'; // Adjust to your backend URL
+import { BACKEND_URL } from '../utils';
+
+const API_URL = 'http://localhost:4000/api/admin/products';
 
 const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -23,12 +25,20 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API_URL}/A`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      const response = await fetch(`${API_URL}/all`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
-      setProducts(response.data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch products');
+      }
+      const data = await response.json();
+      setProducts(data);
+      setError(null);
     } catch (err) {
-      setError('Failed to fetch products');
+      setError(err.message);
       console.error(err);
     }
   };
@@ -45,40 +55,36 @@ const AdminDashboard = () => {
 
   const handleSaveProduct = async (productData) => {
     try {
-      const formData = new FormData();
-      Object.keys(productData).forEach((key) => {
-        formData.append(key, productData[key]);
+      const url = editingProduct ? `${API_URL}/${editingProduct._id}` : `${API_URL}/`;
+      const method = editingProduct ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || (editingProduct ? 'Failed to update product' : 'Failed to create product'));
+      }
+
+      const updatedProduct = await response.json();
       if (editingProduct) {
-        // Update product
-        const response = await axios.put(
-          `${API_URL}/${editingProduct._id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
         setProducts((prev) =>
-          prev.map((p) => (p._id === editingProduct._id ? response.data : p))
+          prev.map((p) => (p._id === editingProduct._id ? updatedProduct : p))
         );
       } else {
-        // Create product
-        const response = await axios.post(`${API_URL}/`, formData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        setProducts((prev) => [...prev, response.data]);
+        setProducts((prev) => [...prev, updatedProduct]);
       }
       setShowForm(false);
       setEditingProduct(null);
+      setError(null);
     } catch (err) {
-      setError('Failed to save product');
+      setError(err.message);
       console.error(err);
     }
   };
@@ -86,12 +92,20 @@ const AdminDashboard = () => {
   const handleDeleteProduct = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await axios.delete(`${API_URL}/${productId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        const response = await fetch(`${API_URL}/${productId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete product');
+        }
         setProducts((prev) => prev.filter((p) => p._id !== productId));
+        setError(null);
       } catch (err) {
-        setError('Failed to delete product');
+        setError(err.message);
         console.error(err);
       }
     }
@@ -162,7 +176,7 @@ const AdminDashboard = () => {
                     )}
                     {product.image && (
                       <img
-                        src={`http://localhost:4000${product.image}`}
+                        src={BACKEND_URL + product.image}
                         alt={product.name}
                         className="w-full h-32 object-cover rounded-md mt-2"
                       />

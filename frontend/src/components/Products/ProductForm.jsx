@@ -1,5 +1,8 @@
+// components/Products/ProductForm.jsx
 import React, { useState, useEffect } from 'react';
 import { Save, X } from 'lucide-react';
+
+import { BACKEND_URL } from '../../utils';
 
 const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
   const [formData, setFormData] = useState({
@@ -7,7 +10,7 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
     price: '',
     category: '',
     description: '',
-    image: null, // Changed to null for file input
+    image: null, // Will store base64 string
     stock: '',
     sku: '',
     featured: false,
@@ -52,7 +55,7 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
       price: parseFloat(formData.price) || 0,
       category: formData.category,
       description: formData.description,
-      image: formData.image, // File object
+      image: formData.image, // Base64 string
       stock: parseInt(formData.stock) || 0,
       sku: formData.sku || `SKU-${Date.now()}`,
       featured: formData.featured,
@@ -63,10 +66,57 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({ ...formData, image: file });
-      setErrors({ ...errors, image: null });
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors({ ...errors, image: 'Image size must be less than 5MB' });
+        return;
+      }
+
+      // Compress image
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxWidth = 800;
+          const maxHeight = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          setFormData({ ...formData, image: compressedBase64 });
+          setErrors({ ...errors, image: null });
+        };
+        img.onerror = () => {
+          setErrors({ ...errors, image: 'Failed to process image' });
+        };
+      };
+      reader.onerror = () => {
+        setErrors({ ...errors, image: 'Failed to read image' });
+      };
+      reader.readAsDataURL(file);
     }
   };
+
+
 
   const categories = [
     'Gift Sets',
@@ -92,9 +142,8 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Enter product name"
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -107,9 +156,8 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
               min="0"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.price ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.price ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="0.00"
             />
             {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
@@ -119,9 +167,8 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.category ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.category ? 'border-red-500' : 'border-gray-300'
+                }`}
             >
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -141,9 +188,8 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
               min="0"
               value={formData.stock}
               onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.stock ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.stock ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="0"
             />
             {errors.stock && <p className="text-red-500 text-xs mt-1">{errors.stock}</p>}
@@ -154,14 +200,13 @@ const ProductForm = ({ product, onSave, onCancel, isEditing }) => {
               type="file"
               accept="image/jpeg,image/jpg,image/png"
               onChange={handleFileChange}
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.image ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.image ? 'border-red-500' : 'border-gray-300'
+                }`}
             />
             {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
             {isEditing && product.image && (
               <img
-                src={`http://localhost:4000${product.image}`}
+                src={BACKEND_URL + product.image}
                 alt="Current product"
                 className="w-24 h-24 object-cover mt-2 rounded"
               />

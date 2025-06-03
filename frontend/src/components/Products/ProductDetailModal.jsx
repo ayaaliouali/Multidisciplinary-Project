@@ -1,6 +1,8 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
+import { BACKEND_URL } from '../../utils';
+
 const ProductDetailModal = ({ product, isOpen, onClose }) => {
   if (!isOpen || !product) return null;
 
@@ -16,7 +18,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
         <div className="space-y-3">
           {product.image && (
             <img
-              src={`http://localhost:4000${product.image}`}
+              src={BACKEND_URL + product.image}
               alt={product.name}
               className="w-full h-48 object-cover rounded-md mb-3"
             />
